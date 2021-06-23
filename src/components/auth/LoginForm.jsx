@@ -98,7 +98,10 @@ const LoginForm = () => {
 		email: '',
 		password: '',
 	});
-	const [err, setErr] = useState(null);
+	const [{ serverErr, clientErr }, setErr] = useState({
+		clientErr: null,
+		serverErr: null,
+	});
 	const [login, { loading, error }] = useMutation(LOGIN, {
 		variables: {
 			email,
@@ -110,9 +113,10 @@ const LoginForm = () => {
 		if (email.length !== 0 && password.length !== 0) {
 			try {
 				const { data } = await login();
-				console.log(data);
 			} catch (err) {
-				console.log(err.message);
+				setErr({
+					serverErr: error.message,
+				});
 			}
 		} else {
 			email.length === 0
@@ -131,20 +135,20 @@ const LoginForm = () => {
 	if (loading) {
 		return <div>Loading</div>;
 	}
-
 	return (
 		<Container onSubmit={handleSubmit}>
-			{err && (
+			{console.log(clientErr + '' + serverErr)}
+			{clientErr && (
 				<Error>
 					<Icon src={errorIcon} />
 					{`Error: please enter required
-${err}`}
+${clientErr}`}
 				</Error>
 			)}
-			{error && (
+			{serverErr && (
 				<Error>
 					<Icon src={errorIcon} />
-					{error.message}
+					{serverErr}
 				</Error>
 			)}
 			<InputContainer>
