@@ -1,15 +1,8 @@
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { LoginButton } from '../pages/Home';
-import { gql, useMutation } from '@apollo/client';
-import { useState } from 'react';
 import errorIcon from '../../assets/error.svg';
 
-const LOGIN = gql`
-	mutation Login($email: String!, $password: String!) {
-		login(email: $email, password: $password)
-	}
-`;
 const Container = styled.form`
 	border-radius: 4px;
 	width: clamp(310px, 90vw, 500px);
@@ -22,13 +15,13 @@ const Container = styled.form`
 	background-color: white;
 `;
 const Input = css`
-	@media screen and (max-width: 508px) {
+	@media screen and (max-width: 530px) {
 		width: 80%;
 		min-width: 290px;
 	}
 	width: 70%;
 `;
-const InputContainer = styled.div`
+const InputContainer = styled.section`
 	display: flex;
 	flex-direction: column;
 	margin: 5px;
@@ -45,7 +38,7 @@ const Wrapper = styled.div`
 	display: flex;
 	align-items: center;
 	${Input};
-	@media screen and (max-width: 430px) {
+	@media screen and (max-width: 480px) {
 		flex-direction: column;
 		height: 60px;
 	}
@@ -93,51 +86,12 @@ const Icon = styled.img`
 	height: 35px;
 	margin-top: 4px;
 `;
-const LoginForm = () => {
-	const [{ email, password }, setDetails] = useState({
-		email: '',
-		password: '',
-	});
-	const [{ serverErr, clientErr }, setErr] = useState({
-		clientErr: null,
-		serverErr: null,
-	});
-	const [login, { loading, error }] = useMutation(LOGIN, {
-		variables: {
-			email,
-			password,
-		},
-	});
-	const handleSubmit = async (e) => {
-		e.preventDefault();
-		if (email.length !== 0 && password.length !== 0) {
-			try {
-				const { data } = await login();
-			} catch (err) {
-				setErr({
-					serverErr: error.message,
-				});
-			}
-		} else {
-			email.length === 0
-				? email.length === 0 && password.length === 0
-					? setErr({ clientErr: 'credentials' })
-					: setErr({ clientErr: 'email' })
-				: setErr({ clientErr: 'password' });
-		}
-	};
-	const handleChange = (e) => {
-		e.preventDefault();
-		const value = e.target.value;
-		const type = e.target.type;
-		setDetails((prevState) => ({ ...prevState, [type]: value }));
-	};
-	if (loading) {
-		return <div>Loading</div>;
-	}
+const Form = ({ details, errors, handleSubmit, handleChange, type, btnRef }) => {
+	const { clientErr, serverErr } = errors;
+	const { email, password } = details;
+
 	return (
 		<Container onSubmit={handleSubmit}>
-			{console.log(clientErr + '' + serverErr)}
 			{clientErr && (
 				<Error>
 					<Icon src={errorIcon} />
@@ -152,21 +106,48 @@ ${clientErr}`}
 				</Error>
 			)}
 			<InputContainer>
-				<Label>Email</Label>
-				<TextInput type='email' value={email} onChange={handleChange} />
+				<Label htmlFor='email'>Email</Label>
+				<TextInput
+					autoFocus={true}
+					id='email'
+					type='email'
+					value={email}
+					onChange={handleChange}
+					required
+				/>
 			</InputContainer>
 			<InputContainer>
-				<Label>Password</Label>
-				<TextInput type='password' value={password} onChange={handleChange} />
+				<Label htmlFor='password'>Password</Label>
+				<TextInput
+					id='new-password'
+					type='password'
+					name='password'
+					value={password}
+					onChange={handleChange}
+					required
+					autoComplete='new-password'
+				/>
 			</InputContainer>
-			<Submit type='submit'>Log in</Submit>
+			<Submit ref={btnRef} type='submit'>
+				{type === 'signup' ? 'Sign Up' : 'Login'}
+			</Submit>
 			<Wrapper>
-				<Forgot to='/forgot_password'>Forgot Password?</Forgot>
+				{type === 'login' && <Forgot to='/forgot_password'>Forgot Password?</Forgot>}
 				<Text>
-					Don't have account <SignUp to='signup'> Sign Up</SignUp>
+					{type === 'login' ? (
+						<>
+							Don't have account
+							<SignUp to='signup'> Sign Up ➜</SignUp>
+						</>
+					) : (
+						<>
+							Already have an account
+							<SignUp to='login'>&ensp; Login ➜</SignUp>
+						</>
+					)}
 				</Text>
 			</Wrapper>
 		</Container>
 	);
 };
-export default LoginForm;
+export default Form;
