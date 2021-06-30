@@ -14,7 +14,6 @@ const Title = styled.div`
 	font-weight: 600;
 	font-size: 30px;
 	margin: 20px 0;
-	font-family: 'Open Sans', sans-serif;
 `;
 const LOGIN = gql`
 	mutation Login($email: String!, $password: String!) {

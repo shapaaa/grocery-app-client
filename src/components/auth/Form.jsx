@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
-import { LoginButton } from '../pages/Home';
+import { LoginButton } from '../pages/Header';
 import errorIcon from '../../assets/error.svg';
+import { typeScale } from '../../utils/typography';
 
 const Container = styled.form`
 	border-radius: 4px;
@@ -33,6 +34,7 @@ const Submit = styled(LoginButton).attrs({ as: 'button' })`
 	cursor: pointer;
 	padding: 25px 0;
 	margin: 30px 0;
+	color: white;
 `;
 const Wrapper = styled.div`
 	display: flex;
@@ -46,16 +48,16 @@ const Wrapper = styled.div`
 `;
 const Label = styled.label`
 	padding: 10px 0;
-	font-size: 16px;
+	font-size: ${typeScale.paragraph};
 `;
 const TextInput = styled.input`
 	height: 45px;
 	padding: 0px 10px;
-	border: 1px solid var(--black);
+	border: 1px solid var(--text);
 	border-radius: 4px;
 `;
 const Forgot = styled(Link)`
-	color: #5a5a5a;
+	color: var(--text-secondary);
 	font-size: 14px;
 	margin-right: 5px;
 `;
@@ -77,7 +79,7 @@ const Error = styled.div`
 	background-color: rgb(247, 247, 247);
 	color: black;
 	padding: 5px 20px;
-	font-size: 1.6rem;
+	font-size: ${typeScale.helperText};
 	border-radius: 4px;
 	margin-bottom: 10px;
 `;
